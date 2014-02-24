@@ -642,6 +642,7 @@ function tbnoti() {
                     $('#mail').attr('href', 'http://www.reddit.com' + messageunreadurl);
                     $('#mailCount').attr('href', 'http://www.reddit.com' + messageunreadurl);
                 } else {
+                    // If it equals the last count on load, or is less, things have been read/we'll update the "last" count later
                     $('#mail').attr('class', 'nohavemail');
                     $('#mail').attr('title', 'no new mail');
                     $('#mail').attr('href', 'http://www.reddit.com/message/inbox/');
@@ -655,14 +656,18 @@ function tbnoti() {
                 $('#tb-mail').attr('href', $('#mail').attr('href'));
                 $('#tb-mailCount').attr('href', $('#mailcount').attr('href'));
                 $('#tb-mailCount').text('[' + count + ']');
+                // Update with the current count here
+                TBUtils.setting('Notifier', 'lastunreadmessagecount', '', count);
             } else {
                 $('#tb-mail').attr('class', $('#mail').attr('class'));
                 $('#tb-mail').attr('title', $('#mail').attr('title'));
                 $('#tb-mail').attr('href', $('#mail').attr('href'));
                 $('#tb-mailCount').attr('href', $('#mailcount').attr('href'));
                 $('#tb-mailCount').text('[' + count + ']');
+                // Set it to the last count here, so we continue orangering until things are read
+                TBUtils.setting('Notifier', 'lastunreadmessagecount', '', lastcount);
+                // Not perfect, since it won't de-oranger if you read and "mark unread" a message (which would de-oranger on a new page)
             }
-            TBUtils.setting('Notifier', 'lastunreadmessagecount', '', count);
         }
 
         function updateModqueueCount(count) {
