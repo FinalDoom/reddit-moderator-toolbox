@@ -634,15 +634,15 @@ function tbnoti() {
         function updateMessagesCount(count) {
             // Get the last count, if it's not available, default to the current count
             // We rely on the first load's #mail.class for determining if there's new mail then
+            // After that, we can compare counts and the loaded #mail.class
             var lastcount = TBUtils.setting('Notifier', 'lastunreadmessagecount', '');
             if (lastcount !== '') {
-                if (count > lastcount) {
+                if (count > lastcount && $('mail').attr('class') === 'nohavemail') {
                     $('#mail').attr('class', 'havemail');
                     $('#mail').attr('title', 'new mail!');
                     $('#mail').attr('href', 'http://www.reddit.com' + messageunreadurl);
                     $('#mailCount').attr('href', 'http://www.reddit.com' + messageunreadurl);
-                } else {
-                    // If it equals the last count on load, or is less, things have been read/we'll update the "last" count later
+                } else if (count <= lastcount && $('#mail').attr('class') === 'havemail') {
                     $('#mail').attr('class', 'nohavemail');
                     $('#mail').attr('title', 'no new mail');
                     $('#mail').attr('href', 'http://www.reddit.com/message/inbox/');
@@ -664,9 +664,7 @@ function tbnoti() {
                 $('#tb-mail').attr('href', $('#mail').attr('href'));
                 $('#tb-mailCount').attr('href', $('#mailcount').attr('href'));
                 $('#tb-mailCount').text('[' + count + ']');
-                // Set it to the last count here, so we continue orangering until things are read
-                TBUtils.setting('Notifier', 'lastunreadmessagecount', '', lastcount);
-                // Not perfect, since it won't de-oranger if you read and "mark unread" a message (which would de-oranger on a new page)
+                // Don't reset the last count here
             }
         }
 
